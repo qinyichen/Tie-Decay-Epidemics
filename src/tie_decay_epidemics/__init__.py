@@ -12,3 +12,4 @@ __copyright__ = "Copyright (c) 2020, Qinyi Chen"
 
 
 from .example import Example  # noqa: F401
+from .TieDecay import TieDecay_Graph, TieDecay_SIS
