@@ -6,6 +6,7 @@ import random
 import os
 import time
 from scipy.sparse import csr_matrix
+from scipy.linalg import eig
 from numpy import linalg as LA
 import IPython
 
@@ -60,10 +61,7 @@ class TieDecay_SIS(object):
         self.rateIS = rateIS
 
         # Node idxs that are infected in the beginning
-        try:
-            self.init_infected = set([self.graph.get_node_id(n) for n in infected])
-        except:
-            IPython.embed()
+        self.init_infected = set([self.graph.get_node_id(n) for n in infected])
 
         # Node idxs that are currently infected/susceptible
         self.infected = self.init_infected.copy()
@@ -81,7 +79,9 @@ class TieDecay_SIS(object):
             self.system_matrix = \
                     (1-rateIS)*np.identity(len(self.nodes))+\
                     rateSI*np.where(self.graph.adj>1, 1, self.graph.adj)
-            w = LA.eigvals(self.system_matrix)
+            # w = LA.eigvals(self.system_matrix)
+            # self.critical_values = [max(abs(w))]
+            w, vl, vr = eig(self.system_matrix, left=True, right=True)
             self.critical_values = [max(abs(w))]
 
     def update_graph(self, t):
@@ -116,12 +116,11 @@ class TieDecay_SIS(object):
             self.system_matrix = np.matmul(\
                         ((1-self.rateIS)*np.identity(len(self.nodes))+\
                         self.rateSI*__adj__), self.system_matrix)
-            w = LA.eigvals(self.system_matrix)
+            w, vl, vr = eig(self.system_matrix, left=True, right=True)
 
             # Note: the power should be (# of temporal snapshots)^-1
             critical_value = max(abs(w))**(1/t)
             print("t = {}, critical value is {}".format(t, critical_value))
-
             self.critical_values.append(critical_value)
 
     def run(self, max_time):
@@ -211,61 +210,3 @@ class TieDecay_SIS(object):
     def get_outbreak_size(self):
         """Return the number of agents infected in history"""
         return len(self.nodes) - self.get_susceptible()
-
-########################### Helper Functions #################################
-
-def plot(SIS, prefix, dirpath="../plots"):
-    """
-    Plot the SIR process w.r.t. time after the SIR process is run
-    """
-    plt.figure()
-    plt.plot(range(SIS.time+1), SIS.susceptible_history, label="Susceptible")
-    plt.plot(range(SIS.time+1), SIS.infected_history, label="Infected")
-    # plt.plot(range(SIS.time+1), SIS.critical_values, label="Critical Value")
-    # plt.plot(range(SIS.time+1), np.ones(SIS.time+1), label="Threshold")
-    plt.title('{}\nrateSI={}, rateIR={}, Outbreak Size={}' \
-                .format(prefix, SIS.rateSI, SIS.rateIS, SIS.get_outbreak_size()))
-    plt.xlabel('Time Step', fontsize=14)
-    plt.ylabel('Number of Susceptible/Infected Individuals', fontsize=14)
-    plt.legend()
-    plt.savefig("{}/{}.png".format(dirpath, prefix))
-    plt.close()
-
-def plot_critical_values(SIS, prefix, dirpath="../plots"):
-    """
-    Plot the change of the critical value (dominant eigenvalue of the system matrix)
-    """
-    len = min(SIS.system_matrix_period, SIS.time)
-
-    plt.figure()
-    plt.plot(range(len+1), SIS.critical_values, label="Critical Value", color="g")
-    plt.plot(range(len+1), np.ones(len+1), label="Threshold", color="r")
-    plt.title('{}\nrateSI={}, rateIR={}'.format(prefix, SIS.rateSI, SIS.rateIS))
-    plt.xlabel('Length of Period $T$', fontsize=14)
-    plt.ylabel('Critical Value', fontsize=14)
-    plt.legend()
-    plt.savefig("{}/{}-critical-values.png".format(dirpath, prefix))
-    plt.close()
-
-def cache(SIS, dirpath, prefix):
-    """
-    Cache the S/I/R numbers for future use
-    """
-    history = np.array((SIS.susceptible_history, SIS.infected_history, \
-                                        SIS.recovered_history), dtype=float)
-    np.save(os.path.join(dirpath, prefix+'.npy'), history)
-
-def dataframe_to_dict(edgelist):
-    """
-    Turn pandas df to dict for faster query of data
-    d.keys(): At which time step should I update the tie strength
-    """
-    start_time = time.time()
-    d = {}
-    for index, row in edgelist.iterrows():
-        try:
-            d[int(row['time'])+1].append((row['src'], row['dst'], row['time']))
-        except KeyError:
-            d[int(row['time'])+1] = [(row['src'], row['dst'], row['time'])]
-    print ("Time taken to turn df to dict is: {}".format(time.time()-start_time))
-    return d
