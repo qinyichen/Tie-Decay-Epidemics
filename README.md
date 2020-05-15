@@ -21,14 +21,14 @@ If you don't have [pip](https://pip.pypa.io) installed, these [installation inst
 you through the process.
 
 ## Quick Start
-First, install all the basic packages.
+First, import all the basic packages.
 ```python
 >>> import tie_decay_epidemics as tde
 >>> import numpy as np
 >>> import pandas as pd
 ```
 
-Construct a tie-decay network with 10 nodes.
+Construct a tie-decay network.
 ```python
 >>> nodes = np.arange(10)
 >>> G = tde.TieDecay_Graph(nodes)
@@ -38,7 +38,7 @@ Simulate an SIS process on a tie-decay network.
 ```python
 >>> nodes = np.arange(10)
 >>> infected = np.array([0])
->>> edgelist = pd.read_csv("[FILE_NAME].csv")
+>>> edgelist = pd.read_csv("FILE_NAME.csv")
 >>> rateSI = 0.2
 >>> rateIS = 0.1 
 >>> alpha = 0.01
