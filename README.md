@@ -22,15 +22,15 @@ you through the process.
 
 ## Quick Start
 ```python
->>> from tie_decay_epidemics import Example
->>> a = Example()
->>> a.get_value()
-10
+>>> import tie_decay_epidemics as tde
+>>> import numpy as np
+>>> nodes = np.arange(10)
+>>> G = tde.TieDecay_Graph(nodes)
 
 ```
 
 ## Citing
-If you use our work in an academic setting, please cite our paper:
+If you use our work in an academic setting, please cite our code.
 
 
 
