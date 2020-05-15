@@ -21,31 +21,30 @@ If you don't have [pip](https://pip.pypa.io) installed, these [installation inst
 you through the process.
 
 ## Quick Start
+First, install all the basic packages.
 ```python
 >>> import tie_decay_epidemics as tde
 >>> import numpy as np
+>>> import pandas as pd
+```
+
+Construct a tie-decay network with 10 nodes.
+```python
 >>> nodes = np.arange(10)
 >>> G = tde.TieDecay_Graph(nodes)
+```
 
+Simulate an SIS process on a tie-decay network.
+```python
+>>> nodes = np.arange(10)
+>>> infected = np.array([0])
+>>> edgelist = pd.read_csv("[FILE_NAME].csv")
+>>> rateSI = 0.2
+>>> rateIS = 0.1 
+>>> alpha = 0.01
+>>> SIS = tde.TieDecay_SIS(nodes, infected, edgelist, rateSI, rateIS, alpha)
+>>> SIS.run(max_time = 1000)
 ```
 
 ## Citing
 If you use our work in an academic setting, please cite our code.
-
-
-
-## Development
-See [CONTRIBUTING.md](CONTRIBUTING.md) for information related to developing the code.
-
-#### Suggested Git Branch Strategy
-1. `master` is for the most up-to-date development, very rarely should you directly commit to this branch. Your day-to-day work should exist on branches separate from `master`. It is recommended to commit to development branches and make pull requests to master.4. It is recommended to use "Squash and Merge" commits when committing PR's. It makes each set of changes to `master`
-atomic and as a side effect naturally encourages small well defined PR's.
-
-
-#### Additional Optional Setup Steps:
-* Create an initial release to test.PyPI and PyPI.
-    * Follow [This PyPA tutorial](https://packaging.python.org/tutorials/packaging-projects/#generating-distribution-archives), starting from the "Generating distribution archives" section.
-
-* Create a blank github repository (without a README or .gitignore) and push the code to it.
-
-* Delete these setup instructions from `README.md` when you are finished with them.
