@@ -11,5 +11,4 @@ __license__ = "MIT"
 __copyright__ = "Copyright (c) 2020, Qinyi Chen"
 
 
-from .example import Example  # noqa: F401
-from .TieDecay import TieDecay_Graph, TieDecay_SIS
+from .tie_decay_epidemics import TieDecay_Graph, TieDecay_SIS

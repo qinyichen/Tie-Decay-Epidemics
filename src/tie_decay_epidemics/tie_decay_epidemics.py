@@ -5,7 +5,7 @@ import time
 from scipy.sparse import csr_matrix
 from scipy.linalg import eig
 from numpy import linalg as LA
-from utils import dataframe_to_dict
+from .utils import dataframe_to_dict
 
 # TODO: Changed the input format of the edgelist to a dataframe --> Test if it works.
 

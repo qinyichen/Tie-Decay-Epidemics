@@ -27,12 +27,13 @@ dev_requirements = [
 
     "bump2version>=1.0.0",
     "ipython>=7.5.0",
+    "tox>=3.15.0",
 
     "twine>=1.13.0",
     "wheel>=0.33.1",
 ]
 
-requirements = ["numpy", "scipy", "pandas", "matplotlib"]
+requirements = ["numpy", "scipy", "pandas", "matplotlib", "pytest"]
 
 extra_requirements = {
     "test": test_requirements,
